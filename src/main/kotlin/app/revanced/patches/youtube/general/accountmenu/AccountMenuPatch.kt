@@ -8,9 +8,9 @@ import app.revanced.patcher.fingerprint.method.impl.MethodFingerprint.Companion.
 import app.revanced.patcher.patch.BytecodePatch
 import app.revanced.patcher.patch.annotation.CompatiblePackage
 import app.revanced.patcher.patch.annotation.Patch
-import app.revanced.patches.youtube.general.accountmenu.fingerprints.AccountMenuElementFingerprint
+import app.revanced.patches.youtube.general.accountmenu.fingerprints.AccountMenuFingerprint
 import app.revanced.patches.youtube.general.accountmenu.fingerprints.AccountMenuParentFingerprint
-import app.revanced.patches.youtube.general.accountmenu.fingerprints.YouTabElementFingerprint
+import app.revanced.patches.youtube.general.accountmenu.fingerprints.LibraryAccountMenuParentFingerprint
 import app.revanced.patches.youtube.utils.resourceid.SharedResourceIdPatch
 import app.revanced.patches.youtube.utils.settings.SettingsPatch
 import app.revanced.util.integrations.Constants.GENERAL
@@ -48,16 +48,19 @@ import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 )
 @Suppress("unused")
 object AccountMenuPatch : BytecodePatch(
-    setOf(AccountMenuParentFingerprint)
+    setOf(
+        AccountMenuParentFingerprint,
+        LibraryAccountMenuParentFingerprint
+    )
 ) {
     override fun execute(context: BytecodeContext) {
 
-        AccountMenuParentFingerprint.result?.let { parentResult ->
-            arrayOf(
-                AccountMenuElementFingerprint,
-                YouTabElementFingerprint
-            ).forEach {
-                it.also {
+        arrayOf(
+            AccountMenuParentFingerprint,
+            LibraryAccountMenuParentFingerprint
+        ).forEach { fingerprint ->
+            fingerprint.result?.let { parentResult ->
+                AccountMenuFingerprint.also {
                     it.resolve(
                         context,
                         parentResult.classDef
@@ -73,9 +76,9 @@ object AccountMenuPatch : BytecodePatch(
                                     "$GENERAL->hideAccountMenu(Landroid/view/View;Ljava/lang/CharSequence;)V"
                         )
                     }
-                }
+                } ?: throw AccountMenuFingerprint.exception
             }
-        } ?: throw AccountMenuParentFingerprint.exception
+        }
 
         /**
          * Add settings
