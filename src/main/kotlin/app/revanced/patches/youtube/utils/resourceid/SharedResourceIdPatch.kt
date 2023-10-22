@@ -99,6 +99,7 @@ object SharedResourceIdPatch : ResourcePatch() {
         AccountSwitcherAccessibility = find(STRING, "account_switcher_accessibility_label")
         AccessibilityCaptionsButtonName = find(STRING, "accessibility_captions_button_name")
         ActionBarRingo = find(LAYOUT, "action_bar_ringo")
+        AccountCompactLink = find(LAYOUT, "account_compact_link")
         AdAttribution = find(ID, "ad_attribution")
         Appearance = find(STRING, "app_theme_appearance_dark")
         AppRelatedEndScreenResults = find(LAYOUT, "app_related_endscreen_results")
