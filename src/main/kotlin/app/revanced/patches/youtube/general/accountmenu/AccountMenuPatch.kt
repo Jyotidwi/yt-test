@@ -8,8 +8,9 @@ import app.revanced.patcher.fingerprint.method.impl.MethodFingerprint.Companion.
 import app.revanced.patcher.patch.BytecodePatch
 import app.revanced.patcher.patch.annotation.CompatiblePackage
 import app.revanced.patcher.patch.annotation.Patch
-import app.revanced.patches.youtube.general.accountmenu.fingerprints.AccountMenuFingerprint
+import app.revanced.patches.youtube.general.accountmenu.fingerprints.AccountMenuElementFingerprint
 import app.revanced.patches.youtube.general.accountmenu.fingerprints.AccountMenuParentFingerprint
+import app.revanced.patches.youtube.general.accountmenu.fingerprints.YouTabElementFingerprint
 import app.revanced.patches.youtube.utils.resourceid.SharedResourceIdPatch
 import app.revanced.patches.youtube.utils.settings.SettingsPatch
 import app.revanced.util.integrations.Constants.GENERAL
@@ -52,23 +53,28 @@ object AccountMenuPatch : BytecodePatch(
     override fun execute(context: BytecodeContext) {
 
         AccountMenuParentFingerprint.result?.let { parentResult ->
-            AccountMenuFingerprint.also {
-                it.resolve(
-                    context,
-                    parentResult.classDef
-                )
-            }.result?.let {
-                it.mutableMethod.apply {
-                    val targetIndex = it.scanResult.patternScanResult!!.startIndex + 2
-                    val targetInstruction = getInstruction<FiveRegisterInstruction>(targetIndex)
-
-                    addInstruction(
-                        targetIndex,
-                        "invoke-static {v${targetInstruction.registerC}, v${targetInstruction.registerD}}, " +
-                                "$GENERAL->hideAccountMenu(Landroid/view/View;Ljava/lang/CharSequence;)V"
+            arrayOf(
+                AccountMenuElementFingerprint,
+                YouTabElementFingerprint
+            ).forEach {
+                it.also {
+                    it.resolve(
+                        context,
+                        parentResult.classDef
                     )
+                }.result?.let {
+                    it.mutableMethod.apply {
+                        val targetIndex = it.scanResult.patternScanResult!!.startIndex + 2
+                        val targetInstruction = getInstruction<FiveRegisterInstruction>(targetIndex)
+
+                        addInstruction(
+                            targetIndex,
+                            "invoke-static {v${targetInstruction.registerC}, v${targetInstruction.registerD}}, " +
+                                    "$GENERAL->hideAccountMenu(Landroid/view/View;Ljava/lang/CharSequence;)V"
+                        )
+                    }
                 }
-            } ?: throw AccountMenuFingerprint.exception
+            }
         } ?: throw AccountMenuParentFingerprint.exception
 
         /**
