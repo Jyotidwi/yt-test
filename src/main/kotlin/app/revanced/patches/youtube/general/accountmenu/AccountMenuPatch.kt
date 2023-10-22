@@ -56,7 +56,6 @@ object AccountMenuPatch : BytecodePatch(
     override fun execute(context: BytecodeContext) {
 
         arrayOf(
-            AccountMenuParentFingerprint,
             LibraryAccountMenuParentFingerprint
         ).forEach { fingerprint ->
             fingerprint.result?.let { parentResult ->
