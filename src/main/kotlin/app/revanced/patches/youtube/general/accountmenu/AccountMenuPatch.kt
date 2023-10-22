@@ -77,7 +77,7 @@ object AccountMenuPatch : BytecodePatch(
                         )
                     }
                 } ?: throw AccountMenuFingerprint.exception
-            }
+            } ?: throw fingerprint.exception
         }
 
         /**
