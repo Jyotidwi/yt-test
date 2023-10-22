@@ -15,6 +15,7 @@ import app.revanced.util.enum.ResourceType.STRING
 
 @Patch(dependencies = [ResourceMappingPatch::class])
 object SharedResourceIdPatch : ResourcePatch() {
+    var AccountCompactLink: Long = -1
     var AccountSwitcherAccessibility: Long = -1
     var AccessibilityCaptionsButtonName: Long = -1
     var ActionBarRingo: Long = -1
@@ -95,11 +96,11 @@ object SharedResourceIdPatch : ResourcePatch() {
             .resourceMappings
             .find { it.type == resourceType.value && it.name == resourceName }?.id
             ?: -1
-
+        
+        AccountCompactLink = find(LAYOUT, "account_compact_link")
         AccountSwitcherAccessibility = find(STRING, "account_switcher_accessibility_label")
         AccessibilityCaptionsButtonName = find(STRING, "accessibility_captions_button_name")
         ActionBarRingo = find(LAYOUT, "action_bar_ringo")
-        AccountCompactLink = find(LAYOUT, "account_compact_link")
         AdAttribution = find(ID, "ad_attribution")
         Appearance = find(STRING, "app_theme_appearance_dark")
         AppRelatedEndScreenResults = find(LAYOUT, "app_related_endscreen_results")
